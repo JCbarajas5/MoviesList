@@ -14,8 +14,12 @@ db = firestore.Client(credentials=creds, project="names-project-demo")
 
 @st.cache_data
 def load_movies():
-    docs = db.collection('movies').stream()
-    return pd.DataFrame([doc.to_dict() for doc in docs])
+    # Get all documents from the 'movies' collection
+    docs = db.collection('movies').get()
+    # Convert the list of document snapshots to a list of dictionaries
+    movies_list = [doc.to_dict() for doc in docs]
+    # Convert the list of dictionaries to a DataFrame
+    return pd.DataFrame(movies_list)
 
 movies_df = load_movies()
 
@@ -36,7 +40,7 @@ if btn_search and search_title:
     # Filtrado insensible a mayúsculas/minúsculas
     mask = movies_df['title'].str.lower().str.contains(search_title.lower(), na=False)
     results = movies_df[mask]
-    st.header(f"Resultados de búsqueda para '{search_title}'")
+    st.header(f" Resultados de búsqueda para '{search_title}'")
     st.write(f"Total de filmes encontrados: {results.shape[0]}")
     st.dataframe(results)
 
