@@ -12,14 +12,6 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds, project="names-project-demo")
 
 
-
-# Inicializa Firestore solo una vez
-if not firebase_admin._apps:
-    cred = credentials.Certificate("names-project-demo-d22f0-firebase-adminsdk-fbsvc-f1601c8680.json")  
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-
 @st.cache_data
 def load_movies():
     docs = db.collection('movies').stream()
