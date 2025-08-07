@@ -12,16 +12,6 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds, project="names-project-demo")
 
 
-
-if not firebase_admin._apps:
-    # En la nube, usar secrets
-    firebase_dict = json.loads(st.secrets["textkey"])
-    cred = credentials.Certificate(firebase_dict)
-    firebase_admin.initialize_app(cred)
-
-
-db = firestore.Client(credentials=creds, project="names-project-demo")
-
 @st.cache_data
 def load_movies():
     docs = db.collection('movies').stream()
