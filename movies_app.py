@@ -26,7 +26,7 @@ def load_movies():
         st.text(traceback.format_exc())
         return pd.DataFrame([])
 
-
+movies_df = load_movies()
 
 st.sidebar.header("🎬 Dashboard de Filmes")
 
