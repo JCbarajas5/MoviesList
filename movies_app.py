@@ -13,12 +13,12 @@ db = firestore.Client(credentials=creds, project="names-project-demo")
 
 
 
-# Inicialización segura
-if not hasattr(st.session_state, "firebase_initialized"):
-    firebase_dict = json.loads(st.secrets["textkey"])
+if not firebase_admin._apps:
+    # En la nube, usar secrets
+    firebase_dict = json.loads(st.secrets["firebase_key"])
     cred = credentials.Certificate(firebase_dict)
-    initialize_app(cred)
-    st.session_state.firebase_initialized = True
+    firebase_admin.initialize_app(cred)
+
 
 db = firestore.client()
 
