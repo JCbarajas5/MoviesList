@@ -14,10 +14,18 @@ db = firestore.Client(credentials=creds, project="names-project-demo")
 
 @st.cache_data
 def load_movies():
-    docs = db.collection('movies').stream()
-    return pd.DataFrame([doc.to_dict() for doc in docs])
+    try:
+        docs = db.collection('movies').limit(3).stream()
+        data = [doc.to_dict() for doc in docs]
+        if not data:
+            st.warning("La colección 'movies' está vacía o no tienes permisos de lectura.")
+        return pd.DataFrame(data)
+    except Exception as e:
+        import traceback
+        st.error(f"Error al leer de Firestore: {e}")
+        st.text(traceback.format_exc())
+        return pd.DataFrame([])
 
-movies_df = load_movies()
 
 
 st.sidebar.header("🎬 Dashboard de Filmes")
