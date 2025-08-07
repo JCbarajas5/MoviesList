@@ -20,7 +20,7 @@ if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 
-db = firestore.client()
+db = firestore.Client(credentials=creds, project="names-project-demo")
 
 @st.cache_data
 def load_movies():
