@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, initialize_app
 from google.cloud import firestore
 from google.oauth2 import service_account
 import json
@@ -12,16 +12,23 @@ creds = service_account.Credentials.from_service_account_info(key_dict)
 db = firestore.Client(credentials=creds, project="names-project-demo")
 
 
+
+# Inicialización segura
+if not hasattr(st.session_state, "firebase_initialized"):
+    firebase_dict = json.loads(st.secrets["textkey"])
+    cred = credentials.Certificate(firebase_dict)
+    initialize_app(cred)
+    st.session_state.firebase_initialized = True
+
+db = firestore.client()
+
 @st.cache_data
 def load_movies():
-    # Get all documents from the 'movies' collection
-    docs = db.collection('movies').get()
-    # Convert the list of document snapshots to a list of dictionaries
-    movies_list = [doc.to_dict() for doc in docs]
-    # Convert the list of dictionaries to a DataFrame
-    return pd.DataFrame(movies_list)
+    docs = db.collection('movies').stream()
+    return pd.DataFrame([doc.to_dict() for doc in docs])
 
 movies_df = load_movies()
+
 
 st.sidebar.header("🎬 Dashboard de Filmes")
 
